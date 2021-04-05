@@ -1,13 +1,16 @@
+
 #include<iostream>
 #include<list>
 #include<set>
-
+#include <vector>
+#define INF 2 << 22
 using namespace std;
 
 struct Graph {
 	int V;
 	set<int, greater<int> >* adjList;
 };
+
 
 // A utility function that creates a graph of V vertices
 Graph* createGraph(int V)
@@ -35,23 +38,24 @@ void addEdge(Graph* graph, int src, int dest)
 	graph->adjList[dest].insert(src);
 }
 
+void neighbour(Graph* graph, int vertex) {
+		
+}
 
-// A utility function to print the adjacency
-// list representation of graph
+//A utility function to print the adjacency
+//list representation of graph
 void printGraph(Graph* graph)
 {
 	for (int i = 0; i < graph->V; ++i) {
 		set<int, greater<int> > lst = graph->adjList[i];
-		cout << endl << "Adjacency list of vertex "
-			<< i << endl;
-
 		for (auto itr = lst.begin(); itr != lst.end(); ++itr)
 			cout << *itr << " ";
 		cout << endl;
 	}
+
 }
 
-// Searches for a given edge in the graph
+//Searches for a given edge in the graph
 void searchEdge(Graph* graph, int src, int dest)
 {
 	auto itr = graph->adjList[src].find(dest);
@@ -65,27 +69,75 @@ void searchEdge(Graph* graph, int src, int dest)
 		<< endl;
 }
 
-// Driver code
-int main()
-{
-	// Create the graph given in the above figure
-	int V = 5;
-	struct Graph* graph = createGraph(V);
-	addEdge(graph, 0, 1);
-	addEdge(graph, 0, 4);
-	addEdge(graph, 1, 2);
-	addEdge(graph, 1, 3);
-	addEdge(graph, 1, 4);
-	addEdge(graph, 2, 3);
-	addEdge(graph, 3, 4);
+/*
+Generates inclusion probability
+*/
+float pHelper() {
+	float pHelper = ((float)rand() / RAND_MAX);
+	return pHelper;
+}
 
-	// Print the adjacency list representation of
-	// the above graph
-	printGraph(graph);
+Graph* build_random_graph(int V, float p) {
+	Graph* graph;
+	graph = createGraph(V);
+	for (int i = 0; i < V; i++) {
+		for (int j = i + 1; j < V; j++)
+		{
+			float r = ((float)rand() / (RAND_MAX + 1.0));
+			if (r <= p)
+				addEdge(graph, i, j);
+		}
+	}
+	return graph;
+}
 
-	// Search the given edge in the graph
-	searchEdge(graph, 2, 1);
-	searchEdge(graph, 0, 3);
+int diameter(Graph* graph) {
 
+}
+
+bool is_isolated(Graph* graph) {
+
+}
+
+bool connectivity(Graph* graph) {
+
+}
+
+void BFS(Graph* graph, int startVertex) {
+	bool* visited = new bool[1000];
+	vector<int> dist;
+	vector<int> parent;
+
+	for (int v = 0; v < 1000; ++v) {
+		dist[v] = INF;
+		parent[v] = -1;
+		visited[v] = false;
+	}
+	dist[startVertex] = 0;
+	visited[startVertex] = true;
+
+	list<int> queue;
+	queue.push_back(startVertex);
+	
+	while (!queue.empty())
+	{
+		startVertex = queue.front();
+		queue.pop_front();
+		for (auto i : )
+		{
+			if (!visited[i])
+			{
+				visited[i] = true;
+				queue.push_back(i);
+			}
+		}
+	}
+
+}
+
+
+int main() {
+	Graph* graph1 = build_random_graph(1000, pHelper());
+	printGraph(graph1);
 	return 0;
 }

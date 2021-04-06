@@ -1,16 +1,25 @@
-﻿
-#include<iostream>
+﻿#include<iostream>
 #include<list>
 #include<set>
-#include <vector>
-#include <algorithm>
-#define INF 2 << 22
+#include<vector>
+#include<algorithm>
+#define INF 2 << 22 // ~~83k
 using namespace std;
+
 struct Graph {
-	int V;
+	int V; // count of the nodes in the graph
 	set<int, greater<int> >* adjList;
 };
+
+//fucntions:
 void BFS(Graph* graph, int startVertex, vector<bool>& visited, vector<int>& dist);
+void addEdge(Graph* graph, int src, int dest);
+Graph* build_random_graph(int V, float p);
+int diameter(Graph* graph);
+bool Is_Isolated(Graph* graph);
+bool connectivity(Graph* graph);
+
+
 
 // A utility function that creates a graph of V vertices
 Graph* createGraph(int V)
@@ -70,13 +79,6 @@ int searchEdge(Graph* graph, int src, int dest)
 		return 1;
 }
 
-/*
-Generates inclusion probability
-*/
-float pHelper() {
-	float pHelper = ((float)rand() / RAND_MAX);
-	return pHelper;
-}
 
 Graph* build_random_graph(int V, float p) {
 	Graph* graph;
@@ -84,7 +86,7 @@ Graph* build_random_graph(int V, float p) {
 	for (int i = 0; i < V; i++) {
 		for (int j = i + 1; j < V; j++)
 		{
-			float r = ((float)rand() / (RAND_MAX + 1.0));
+			float r = ((float)rand() / (RAND_MAX + 1.0)); //rolls "random" theta
 			if (r <= p)
 				addEdge(graph, i, j);
 		}
@@ -95,10 +97,12 @@ Graph* build_random_graph(int V, float p) {
 int diameter(Graph* graph) {
 
 	int diameter = 0;
+	//for each vertex in the graph 
 	for (int i = 0; i < graph->V; i++) {
 		vector<bool> visited;
 		vector<int> dist;
 		BFS(graph, i, visited, dist);
+		// distance from the start vertex to the farthest leaf
 		int max_dist = *max_element(dist.begin(), dist.end());
 		if (max_dist == INF)
 			return INF;
@@ -108,12 +112,13 @@ int diameter(Graph* graph) {
 	return diameter;
 }
 
-bool is_isolated(Graph* graph) {
+bool Is_Isolated(Graph* graph) {
 
 	for (int i = 0; i < graph->V; i++) {
-		if (graph->adjList[i].empty()) // צריך לגרום לזה לעבוד כי הצד השמאלי זה לא מספר, צריך פונקציה שמחזירה את מספר שכנים שיש
+		// check if the "i" node has neighbors attached with an edge
+		if (graph->adjList[i].empty())
 			return true;
-		continue;
+		continue; /* למה אנחנו צריכים את זה?*/
 	}
 	return false;
 }
@@ -123,26 +128,29 @@ bool connectivity(Graph* graph) {
 	vector<int> dist;
 
 	BFS(graph, 0, visited, dist);
-	
-	for (int i = 1; i < graph->V; i++) { //stating from the next vertex
-		if (!visited[i])
+
+	//stating from the second vertex
+	for (int i = 1; i < graph->V; i++) {
+		if (!visited[i]) // if not visited that means BFS fucntion hasn't reached all the nodes
 			return false;
 	}
 	return true;
-
 }
 
-void BFS(Graph* graph, int startVertex, vector<bool>& visited, vector<int>& dist) {
-	visited.resize(graph->V,false);
-	dist.resize(graph->V, INF);
+void BFS(Graph* graph, int startVertex, vector<bool>& visited, vector<int>& distance) {
+	// resize the vectors (visited and distance arrays) and intialise with false
+	visited.resize(graph->V, false);
+	distance.resize(graph->V, INF);
 
 	for (int v = 0; v < graph->V; ++v) {
-		dist[v] = INF;
+		distance[v] = INF;
 		visited[v] = false;
 	}
-	dist[startVertex] = 0;
+	// initialising the start vertex
+	distance[startVertex] = 0;
 	visited[startVertex] = true;
 
+	//create queue for bfs and push the start vertex
 	list<int> queue;
 	queue.push_back(startVertex);
 
@@ -150,18 +158,18 @@ void BFS(Graph* graph, int startVertex, vector<bool>& visited, vector<int>& dist
 	{
 		startVertex = queue.front();
 		queue.pop_front();
+		// for each neighbors of 'i' vertex
 		for (auto i : graph->adjList[startVertex])
 		{
+			// mark as visited, push into the queue, save distance from starting node
 			if (!visited[i])
 			{
 				visited[i] = true;
 				queue.push_back(i);
-				dist[i] = dist[startVertex] + 1;
+				distance[i] = distance[startVertex] + 1;
 			}
-
 		}
 	}
-
 }
 
 

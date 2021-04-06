@@ -1,4 +1,4 @@
-
+﻿
 #include<iostream>
 #include<list>
 #include<set>
@@ -93,7 +93,11 @@ int diameter(Graph* graph) {
 }
 
 bool is_isolated(Graph* graph) {
-
+	for (int i = 0; i < 1000; i++) {
+		if (graph->adjList[i] == 0) // צריך לגרום לזה לעבוד כי הצד השמאלי זה לא מספר, צריך פונקציה שמחזירה את מספר שכנים שיש
+			return true;
+	}
+	return false;
 }
 
 bool connectivity(Graph* graph) {

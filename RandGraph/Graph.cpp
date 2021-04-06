@@ -101,6 +101,14 @@ bool is_isolated(Graph* graph) {
 }
 
 bool connectivity(Graph* graph) {
+	BFS(graph, 0);
+	// לגשת למערך הפאי.הורים
+
+	for (int i = 1; i < /*size of pie*/; i++) { //stating from the next vertex
+		if (/*pie[i]*/ == -1)
+			return fasle;
+	}
+	return true;
 
 }
 

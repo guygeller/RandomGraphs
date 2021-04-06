@@ -53,17 +53,20 @@ void printGraph(Graph* graph)
 }
 
 //Searches for a given edge in the graph
-void searchEdge(Graph* graph, int src, int dest)
+int searchEdge(Graph* graph, int src, int dest)
 {
 	auto itr = graph->adjList[src].find(dest);
+
 	if (itr == graph->adjList[src].end())
-		cout << endl << "Edge from " << src
+		/*cout << endl << "Edge from " << src
 		<< " to " << dest << " not found."
-		<< endl;
+		<< endl;*/
+		return 0;
 	else
-		cout << endl << "Edge from " << src
+		/*cout << endl << "Edge from " << src
 		<< " to " << dest << " found."
-		<< endl;
+		<< endl;*/
+		return 1;
 }
 
 /*
@@ -93,9 +96,11 @@ int diameter(Graph* graph) {
 }
 
 bool is_isolated(Graph* graph) {
+
 	for (int i = 0; i < 1000; i++) {
-		if (graph->adjList[i] == 0) // צריך לגרום לזה לעבוד כי הצד השמאלי זה לא מספר, צריך פונקציה שמחזירה את מספר שכנים שיש
+		if (graph->adjList[i].empty()) // צריך לגרום לזה לעבוד כי הצד השמאלי זה לא מספר, צריך פונקציה שמחזירה את מספר שכנים שיש
 			return true;
+		continue;
 	}
 	return false;
 }

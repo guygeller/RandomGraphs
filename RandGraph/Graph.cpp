@@ -3,14 +3,14 @@
 #include<list>
 #include<set>
 #include <vector>
+#include <algorithm>
 #define INF 2 << 22
 using namespace std;
-
 struct Graph {
 	int V;
 	set<int, greater<int> >* adjList;
 };
-
+void BFS(Graph* graph, int startVertex, vector<bool>& visited, vector<int>& dist);
 
 // A utility function that creates a graph of V vertices
 Graph* createGraph(int V)
@@ -45,6 +45,7 @@ void printGraph(Graph* graph)
 {
 	for (int i = 0; i < graph->V; ++i) {
 		set<int, greater<int> > lst = graph->adjList[i];
+		cout << i << ": ";
 		for (auto itr = lst.begin(); itr != lst.end(); ++itr)
 			cout << *itr << " ";
 		cout << endl;
@@ -93,11 +94,23 @@ Graph* build_random_graph(int V, float p) {
 
 int diameter(Graph* graph) {
 
+	int diameter = 0;
+	for (int i = 0; i < graph->V; i++) {
+		vector<bool> visited;
+		vector<int> dist;
+		BFS(graph, i, visited, dist);
+		int max_dist = *max_element(dist.begin(), dist.end());
+		if (max_dist == INF)
+			return INF;
+		if (diameter < max_dist)
+			diameter = max_dist;
+	}
+	return diameter;
 }
 
 bool is_isolated(Graph* graph) {
 
-	for (int i = 0; i < 1000; i++) {
+	for (int i = 0; i < graph->V; i++) {
 		if (graph->adjList[i].empty()) // צריך לגרום לזה לעבוד כי הצד השמאלי זה לא מספר, צריך פונקציה שמחזירה את מספר שכנים שיש
 			return true;
 		continue;
@@ -106,25 +119,25 @@ bool is_isolated(Graph* graph) {
 }
 
 bool connectivity(Graph* graph) {
-	BFS(graph, 0);
-	// לגשת למערך הפאי.הורים
+	vector<bool> visited;
+	vector<int> dist;
 
-	for (int i = 1; i < /*size of pie*/; i++) { //stating from the next vertex
-		if (/*pie[i]*/ == -1)
-			return fasle;
+	BFS(graph, 0, visited, dist);
+	
+	for (int i = 1; i < graph->V; i++) { //stating from the next vertex
+		if (!visited[i])
+			return false;
 	}
 	return true;
 
 }
 
-void BFS(Graph* graph, int startVertex) {
-	bool* visited = new bool[1000];
-	vector<int> dist;
-	vector<int> parent;
+void BFS(Graph* graph, int startVertex, vector<bool>& visited, vector<int>& dist) {
+	visited.resize(graph->V,false);
+	dist.resize(graph->V, INF);
 
-	for (int v = 0; v < 1000; ++v) {
+	for (int v = 0; v < graph->V; ++v) {
 		dist[v] = INF;
-		parent[v] = -1;
 		visited[v] = false;
 	}
 	dist[startVertex] = 0;
@@ -143,8 +156,7 @@ void BFS(Graph* graph, int startVertex) {
 			{
 				visited[i] = true;
 				queue.push_back(i);
-				dist.push_back(i++);
-				parent.push_back(startVertex);
+				dist[i] = dist[startVertex] + 1;
 			}
 
 		}
@@ -154,7 +166,17 @@ void BFS(Graph* graph, int startVertex) {
 
 
 int main() {
-	Graph* graph1 = build_random_graph(1000, pHelper());
-	printGraph(graph1);
+	int ok = 0;
+	//printGraph(graph1);
+	for (int i = 0; i < 100; i++) {
+		Graph* graph1 = build_random_graph(1000, 0.012);
+		if (connectivity(graph1))
+			ok++;
+		delete[] graph1->adjList;
+		delete graph1;
+	}
+	cout << ok;
+	//cout << is_isolated(graph1)<<endl;
+	//cout << diameter(graph1);
 	return 0;
 }

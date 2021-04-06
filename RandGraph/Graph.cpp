@@ -38,9 +38,6 @@ void addEdge(Graph* graph, int src, int dest)
 	graph->adjList[dest].insert(src);
 }
 
-void neighbour(Graph* graph, int vertex) {
-		
-}
 
 //A utility function to print the adjacency
 //list representation of graph
@@ -118,18 +115,21 @@ void BFS(Graph* graph, int startVertex) {
 
 	list<int> queue;
 	queue.push_back(startVertex);
-	
+
 	while (!queue.empty())
 	{
 		startVertex = queue.front();
 		queue.pop_front();
-		for (auto i : )
+		for (auto i : graph->adjList[startVertex])
 		{
 			if (!visited[i])
 			{
 				visited[i] = true;
 				queue.push_back(i);
+				dist.push_back(i++);
+				parent.push_back(startVertex);
 			}
+
 		}
 	}
 

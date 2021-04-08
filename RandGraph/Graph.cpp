@@ -3,7 +3,9 @@
 #include<set>
 #include<vector>
 #include<algorithm>
-#define INF 2 << 22 // ~~83k
+#include<fstream>
+#include<cmath>
+#define INF 2 << 22 // ~~830k
 using namespace std;
 
 struct Graph {
@@ -18,6 +20,10 @@ Graph* build_random_graph(int V, float p);
 int diameter(Graph* graph);
 bool Is_Isolated(Graph* graph);
 bool connectivity(Graph* graph);
+void create();
+int Test1(int V, int itr, float P);
+int Test2(int V, int itr, float P);
+int Test3(int V, int itr, float P);
 
 
 
@@ -80,14 +86,14 @@ int searchEdge(Graph* graph, int src, int dest)
 }
 
 
-Graph* build_random_graph(int V, float p) {
+Graph* build_random_graph(int V, float P) {
 	Graph* graph;
 	graph = createGraph(V);
 	for (int i = 0; i < V; i++) {
 		for (int j = i + 1; j < V; j++)
 		{
-			float r = ((float)rand() / (RAND_MAX + 1.0)); //rolls "random" theta
-			if (r <= p)
+			float r = ((float)rand() / (RAND_MAX)); //rolls "random" theta
+			if (r <= P)
 				addEdge(graph, i, j);
 		}
 	}
@@ -118,7 +124,6 @@ bool Is_Isolated(Graph* graph) {
 		// check if the "i" node has neighbors attached with an edge
 		if (graph->adjList[i].empty())
 			return true;
-		continue; /* למה אנחנו צריכים את זה?*/
 	}
 	return false;
 }
@@ -172,19 +177,84 @@ void BFS(Graph* graph, int startVertex, vector<bool>& visited, vector<int>& dist
 	}
 }
 
+void create()//write to CSV file
+{
+	ofstream file;
+	// opens an existing csv file or creates a new file.
+	file.open("Test.csv");
+	for (int i = 0; i < 9; i++) { // 10 tests for each P value
+		// Insert the data to file
+		file << endl;
+	}
+	file.close();
+}
+
+int Test1(int V, int itr, float P) {
+	int counter = 0; // counter for a number of connected graphs
+	for (int i = 0; i < itr; i++) {
+		Graph* graph = build_random_graph(V, P);
+		bool test = connectivity(graph);
+		if (test)
+			counter++;
+
+		delete[] graph->adjList;
+		delete graph;
+	}
+	return counter;
+}
+
+int Test2(int V, int itr, float P) {
+	int counter = 0; // counter for graphs with diamter of 2
+	for (int i = 0; i < itr; i++) {
+		Graph* graph = build_random_graph(V, P);
+		int test = diameter(graph);
+		if (test == 2)
+			counter++;
+
+		delete[] graph->adjList;
+		delete graph;
+	}
+	return counter;
+}
+
+int Test3(int V, int itr, float P) {
+	int counter = 0; // counter for graphs with isolated vertices
+	for (int i = 0; i < itr; i++) {
+		Graph* graph = build_random_graph(V, P);
+		bool test = Is_Isolated(graph);
+		if (test)
+			counter++;
+
+		delete[] graph->adjList;
+		delete graph;
+	}
+	return counter;
+}
+
 
 int main() {
-	int ok = 0;
-	//printGraph(graph1);
-	for (int i = 0; i < 100; i++) {
+	int V = 100; // number of vertices
+	int itr = 500;
+	float P[2] = { 0.039, 0.05 };
+	for (int i = 0; i < 2; i++)
+	{
+		int test1 = Test3(V, itr, P[i]);
+		cout << "test1: " << P[i] << ": true: " << test1 << " false: " << (itr - test1) << endl;
+
+	}
+	//int ok = 0;
+	/*for (int i = 0; i < 100; i++) {
 		Graph* graph1 = build_random_graph(1000, 0.012);
 		if (connectivity(graph1))
 			ok++;
 		delete[] graph1->adjList;
 		delete graph1;
-	}
-	cout << ok;
+	}*/
+	//cout << ok;
+	//Graph* graph1 = build_random_graph(7, 0.5);
+	//printGraph(graph1);
 	//cout << is_isolated(graph1)<<endl;
 	//cout << diameter(graph1);
+	//create();
 	return 0;
 }

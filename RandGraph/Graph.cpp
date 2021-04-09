@@ -102,11 +102,16 @@ int diameter(Graph* graph) {
 	int diameter = 0;
 	//for each vertex in the graph 
 	for (int i = 0; i < graph->V; i++) {
-		vector<bool> visited;
-		vector<int> dist;
-		BFS(graph, i, visited, dist);
+		vector<bool> visited(graph->V, false);
+		vector<int> distance(graph->V, INF);
+		// initialising the start vertex
+		visited[i] = true;
+		distance[i] = 0;
+
+		BFS(graph, i, visited, distance);
+
 		// distance from the start vertex to the farthest leaf
-		int max_dist = *max_element(dist.begin(), dist.end());
+		int max_dist = *max_element(distance.begin(), distance.end());
 		if (max_dist == INF)
 			return INF;
 		if (diameter < max_dist)
@@ -118,7 +123,7 @@ int diameter(Graph* graph) {
 bool Is_Isolated(Graph* graph) {
 
 	for (int i = 0; i < graph->V; i++) {
-		// check if the "i" node has neighbors attached with an edge
+		// check if the "i" node has neighbors
 		if (graph->adjList[i].empty())
 			return true;
 	}
@@ -126,10 +131,13 @@ bool Is_Isolated(Graph* graph) {
 }
 
 bool connectivity(Graph* graph) {
-	vector<bool> visited;
-	vector<int> dist;
+	vector<bool> visited(graph->V, false);
+	vector<int> distance(graph->V, INF);
+	// initialising the start vertex
+	visited[0] = true;
+	distance[0] = 0;
 
-	BFS(graph, 0, visited, dist);
+	BFS(graph, 0, visited, distance);
 
 	//stating from the second vertex
 	for (int i = 1; i < graph->V; i++) {
@@ -140,17 +148,15 @@ bool connectivity(Graph* graph) {
 }
 
 void BFS(Graph* graph, int startVertex, vector<bool>& visited, vector<int>& distance) {
+	/*
 	// resize the vectors (visited and distance arrays) and intialise with false
 	visited.resize(graph->V, false);
 	distance.resize(graph->V, INF);
 
-	for (int v = 0; v < graph->V; ++v) {
-		distance[v] = INF;
-		visited[v] = false;
-	}
-	// initialising the start vertex
+	//// initialising the start vertex
 	distance[startVertex] = 0;
 	visited[startVertex] = true;
+	*/
 
 	//create queue for bfs and push the start vertex
 	list<int> queue;
@@ -231,10 +237,13 @@ int main() {
 	const int itr = 500; // number of graphs
 	//float P100[10] = { 0.009, 0.01, 0.015, 0.02, 0.045, 0.05, 0.06, 0.07, 0.08, 0.09 };
 	float P1000[10] = { 0.0007, 0.002, 0.003,0.006, 0.0063,0.00699, 0.00788, 0.00999, 0.012, 0.014 }; // thershold 0.00690775527
-	ofstream file;
-	// opens an existing csv file or creates a new file.
+	//float P2_100[10] = { 0.5, 0.1, 0.15, 0.2, 0.25, 0.3, 0.5, 0.65, 0.8, 0.9 };
+	//float P2_1000[10] = { 0.01 , 0.05 , 0.07, 0.09, 0.01, 0.119, 0.13, 0.27, 0.48, 0.79 }; // threshold 0.11753940002
 
+	// opens an existing csv file or creates a new file.
+	ofstream file;
 	file.open("Test.csv");
+
 	file << "test1," << "Probabilty, connectivity, nubmer of graphs, connectivity, number of graphs" << endl;
 	for (int i = 0; i < 10; i++) {
 		int test1 = Test1(V, itr, P1000[i]);
@@ -242,21 +251,19 @@ int main() {
 		cout << "P" << i + 1 << " finished in test1" << endl;
 	}
 	cout << "test1 is finished" << endl;
-	file << "test2, Probability, diameter" << endl;
 
-	//float P2_100[10] = { 0.5, 0.1, 0.15, 0.2, 0.25, 0.3, 0.5, 0.65, 0.8, 0.9 };
-	float P2_1000[10] = { 0.01 , 0.05 , 0.07, 0.09, 0.01, 0.119, 0.13, 0.27, 0.48, 0.79 }; // threshold 0.11753940002
-	for (int i = 0; i < 10; i++) {
-		int test2 = Test2(V, itr, P2_1000[i]);
-		file << "," << P2_1000[i] << ": , " << test2 << endl;
-		cout << "P " << i + 1 << " finished in test2" << endl;
-	}
-	cout << "test2 is finished" << endl;
-	file << "test3, Probability, number of isolated" << endl;
+	//file << "test2, Probability, diameter <= 2, diameter > 2" << endl;
+	//for (int i = 0; i < 10; i++) {
+	//	int test2 = Test2(V, itr, P2_1000[i]);
+	//	file << "," << P2_1000[i] << ":, " << test2 << ", " << (itr - test2) << endl;
+	//	cout << "P " << i + 1 << " finished in test2" << endl;
+	//}
+	//cout << "test2 is finished" << endl;
 
+	file << "test3, Probability, number of isolated vertices, number of non isolated vertices" << endl;
 	for (int i = 0; i < 10; i++) {
-		int test3 = Test2(V, itr, P1000[i]);
-		file << "," << P1000[i] << ":, " << test3 << endl;
+		int test3 = Test3(V, itr, P1000[i]);
+		file << "," << P1000[i] << ":, " << test3 << ", " << (itr - test3) << endl;
 		cout << "P" << i + 1 << " finished in test3" << endl;
 	}
 	cout << "test3 is finished" << endl;

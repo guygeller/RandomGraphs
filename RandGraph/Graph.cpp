@@ -208,7 +208,7 @@ int Test2(int V, int itr, float P) {
 	for (int i = 0; i < itr; i++) {
 		Graph* graph = build_random_graph(V, P);
 		int test = diameter(graph);
-		if (test == 2)
+		if (test <= 2)
 			counter++;
 
 		delete[] graph->adjList;

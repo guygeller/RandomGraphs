@@ -56,34 +56,34 @@ void addEdge(Graph* graph, int src, int dest)
 
 //A utility function to print the adjacency
 //list representation of graph
-void printGraph(Graph* graph)
-{
-	for (int i = 0; i < graph->V; ++i) {
-		set<int, greater<int> > lst = graph->adjList[i];
-		cout << i << ": ";
-		for (auto itr = lst.begin(); itr != lst.end(); ++itr)
-			cout << *itr << " ";
-		cout << endl;
-	}
-
-}
+//void printGraph(Graph* graph)
+//{
+//	for (int i = 0; i < graph->V; ++i) {
+//		set<int, greater<int> > lst = graph->adjList[i];
+//		cout << i << ": ";
+//		for (auto itr = lst.begin(); itr != lst.end(); ++itr)
+//			cout << *itr << " ";
+//		cout << endl;
+//	}
+//
+//}
 
 //Searches for a given edge in the graph
-int searchEdge(Graph* graph, int src, int dest)
-{
-	auto itr = graph->adjList[src].find(dest);
-
-	if (itr == graph->adjList[src].end())
-		/*cout << endl << "Edge from " << src
-		<< " to " << dest << " not found."
-		<< endl;*/
-		return 0;
-	else
-		/*cout << endl << "Edge from " << src
-		<< " to " << dest << " found."
-		<< endl;*/
-		return 1;
-}
+//int searchEdge(Graph* graph, int src, int dest)
+//{
+//	auto itr = graph->adjList[src].find(dest);
+//
+//	if (itr == graph->adjList[src].end())
+//		/*cout << endl << "Edge from " << src
+//		<< " to " << dest << " not found."
+//		<< endl;*/
+//		return 0;
+//	else
+//		/*cout << endl << "Edge from " << src
+//		<< " to " << dest << " found."
+//		<< endl;*/
+//		return 1;
+//}
 
 
 Graph* build_random_graph(int V, float P) {
@@ -177,17 +177,17 @@ void BFS(Graph* graph, int startVertex, vector<bool>& visited, vector<int>& dist
 	}
 }
 
-void create()//write to CSV file
-{
-	ofstream file;
-	// opens an existing csv file or creates a new file.
-	file.open("Test.csv");
-	for (int i = 0; i < 9; i++) { // 10 tests for each P value
-		// Insert the data to file
-		file << endl;
-	}
-	file.close();
-}
+//void create()//write to CSV file
+//{
+//	ofstream file;
+//	// opens an existing csv file or creates a new file.
+//	file.open("Test.csv");
+//	for (int i = 0; i < 10; i++) { // 10 tests for each P value
+//		// Insert the data to file
+//		file << endl;
+//	}
+//	file.close();
+//}
 
 int Test1(int V, int itr, float P) {
 	int counter = 0; // counter for a number of connected graphs
@@ -233,15 +233,37 @@ int Test3(int V, int itr, float P) {
 
 
 int main() {
-	int V = 100; // number of vertices
+	int V = 1000; // number of vertices
 	int itr = 500;
-	float P[2] = { 0.039, 0.05 };
-	for (int i = 0; i < 2; i++)
+	//float P100[10] = { 0.009, 0.01, 0.015, 0.02, 0.045, 0.05, 0.06, 0.07, 0.08, 0.09 };
+	float P1000[10] = { 0.0007, 0.001, 0.002, 0.003, 0.006, 0.008, 0.01, 0.012, 0.014, 0.016 };
+	ofstream file;
+	// opens an existing csv file or creates a new file.
+
+	file.open("Test.csv");
+	file << "test1," << "Probabilty, connectivity, nubmer of graphs, connectivity, number of graphs" << endl;
+	for (int i = 0; i < 10; i++)
 	{
-		int test1 = Test3(V, itr, P[i]);
-		cout << "test1: " << P[i] << ": true: " << test1 << " false: " << (itr - test1) << endl;
+		int test1 = Test1(V, itr, P1000[i]);
+		file << "," << P1000[i] << ":, true: ," << test1 << ", false: ," << (itr - test1) << endl;
 
 	}
+	file << "test2, Probability, diameter" << endl;
+
+	//float P2_100[10] = { 0.5, 0.1, 0.15, 0.2, 0.25, 0.3, 0.5, 0.65, 0.8, 0.9 };
+	float P2_1000[10] = { 0.03 , 0.04 , 0.05, 0.06, 0.08, 0.09, 0.1, 0.3, 0.5, 0.8 };
+	for (int i = 0; i < 10; i++)
+	{
+		int test2 = Test2(V, itr, P2_1000[i]);
+		file << "," << P2_1000[i] << ": , " << test2 << endl;
+	}
+	file << "test3, Probability, number of isolated" << endl;
+	for (int i = 0; i < 10; i++)
+	{
+		int test3 = Test2(V, itr, P1000[i]);
+		file << "," << P1000[i] << ":, " << test3 << endl;
+	}
+	file.close();
 	//int ok = 0;
 	/*for (int i = 0; i < 100; i++) {
 		Graph* graph1 = build_random_graph(1000, 0.012);

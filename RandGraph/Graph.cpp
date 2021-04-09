@@ -10,7 +10,7 @@ using namespace std;
 
 struct Graph {
 	int V; // count of the nodes in the graph
-	set<int, greater<int> >* adjList;
+	set<int, greater<int> >* adjList; // neighbors
 };
 
 //fucntions:
@@ -20,7 +20,7 @@ Graph* build_random_graph(int V, float p);
 int diameter(Graph* graph);
 bool Is_Isolated(Graph* graph);
 bool connectivity(Graph* graph);
-void create();
+//void create();
 int Test1(int V, int itr, float P);
 int Test2(int V, int itr, float P);
 int Test3(int V, int itr, float P);
@@ -28,8 +28,7 @@ int Test3(int V, int itr, float P);
 
 
 // A utility function that creates a graph of V vertices
-Graph* createGraph(int V)
-{
+Graph* createGraph(int V) {
 	Graph* graph = new Graph;
 	graph->V = V;
 
@@ -41,8 +40,7 @@ Graph* createGraph(int V)
 }
 
 // Adds an edge to an undirected graph
-void addEdge(Graph* graph, int src, int dest)
-{
+void addEdge(Graph* graph, int src, int dest) {
 	// Add an edge from src to dest.  A new
 	// element is inserted to the adjacent
 	// list of src.
@@ -90,8 +88,7 @@ Graph* build_random_graph(int V, float P) {
 	Graph* graph;
 	graph = createGraph(V);
 	for (int i = 0; i < V; i++) {
-		for (int j = i + 1; j < V; j++)
-		{
+		for (int j = i + 1; j < V; j++) {
 			float r = ((float)rand() / (RAND_MAX)); //rolls "random" theta
 			if (r <= P)
 				addEdge(graph, i, j);
@@ -159,16 +156,13 @@ void BFS(Graph* graph, int startVertex, vector<bool>& visited, vector<int>& dist
 	list<int> queue;
 	queue.push_back(startVertex);
 
-	while (!queue.empty())
-	{
+	while (!queue.empty()) {
 		startVertex = queue.front();
 		queue.pop_front();
 		// for each neighbors of 'i' vertex
-		for (auto i : graph->adjList[startVertex])
-		{
+		for (auto i : graph->adjList[startVertex]) {
 			// mark as visited, push into the queue, save distance from starting node
-			if (!visited[i])
-			{
+			if (!visited[i]) {
 				visited[i] = true;
 				queue.push_back(i);
 				distance[i] = distance[startVertex] + 1;
@@ -233,36 +227,40 @@ int Test3(int V, int itr, float P) {
 
 
 int main() {
-	int V = 1000; // number of vertices
-	int itr = 500;
+	const int V = 1000; // number of vertices
+	const int itr = 500; // number of graphs
 	//float P100[10] = { 0.009, 0.01, 0.015, 0.02, 0.045, 0.05, 0.06, 0.07, 0.08, 0.09 };
-	float P1000[10] = { 0.0007, 0.001, 0.002, 0.003, 0.006, 0.008, 0.01, 0.012, 0.014, 0.016 };
+	float P1000[10] = { 0.0007, 0.002, 0.003,0.006, 0.0063,0.00699, 0.00788, 0.00999, 0.012, 0.014 }; // thershold 0.00690775527
 	ofstream file;
 	// opens an existing csv file or creates a new file.
 
 	file.open("Test.csv");
 	file << "test1," << "Probabilty, connectivity, nubmer of graphs, connectivity, number of graphs" << endl;
-	for (int i = 0; i < 10; i++)
-	{
+	for (int i = 0; i < 10; i++) {
 		int test1 = Test1(V, itr, P1000[i]);
 		file << "," << P1000[i] << ":, true: ," << test1 << ", false: ," << (itr - test1) << endl;
-
+		cout << "P" << i + 1 << " finished in test1" << endl;
 	}
+	cout << "test1 is finished" << endl;
 	file << "test2, Probability, diameter" << endl;
 
 	//float P2_100[10] = { 0.5, 0.1, 0.15, 0.2, 0.25, 0.3, 0.5, 0.65, 0.8, 0.9 };
-	float P2_1000[10] = { 0.03 , 0.04 , 0.05, 0.06, 0.08, 0.09, 0.1, 0.3, 0.5, 0.8 };
-	for (int i = 0; i < 10; i++)
-	{
+	float P2_1000[10] = { 0.01 , 0.05 , 0.07, 0.09, 0.01, 0.119, 0.13, 0.27, 0.48, 0.79 }; // threshold 0.11753940002
+	for (int i = 0; i < 10; i++) {
 		int test2 = Test2(V, itr, P2_1000[i]);
 		file << "," << P2_1000[i] << ": , " << test2 << endl;
+		cout << "P " << i + 1 << " finished in test2" << endl;
 	}
+	cout << "test2 is finished" << endl;
 	file << "test3, Probability, number of isolated" << endl;
-	for (int i = 0; i < 10; i++)
-	{
+
+	for (int i = 0; i < 10; i++) {
 		int test3 = Test2(V, itr, P1000[i]);
 		file << "," << P1000[i] << ":, " << test3 << endl;
+		cout << "P" << i + 1 << " finished in test3" << endl;
 	}
+	cout << "test3 is finished" << endl;
+
 	file.close();
 	//int ok = 0;
 	/*for (int i = 0; i < 100; i++) {

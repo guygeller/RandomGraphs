@@ -3,6 +3,7 @@
 #include<vector>
 #include<queue>
 #include<algorithm>
+#include<future>
 #define INF INT_MAX
 using namespace std;
 
@@ -20,6 +21,7 @@ bool Is_Isolated(Graph* graph);
 bool connectivity(Graph* graph);
 int Test1(int V, int itr, float P);
 int Test2(int V, int itr, float P);
+void test2Loop(int start, int end, int V, float P, vector<int>* counter, int itr);
 int Test3(int V, int itr, float P);
 
 
@@ -140,7 +142,9 @@ int Test1(int V, int itr, float P) {
 	return counter;
 }
 
-int Test2(int V, int itr, float P) {
+
+//Test2 function without using threads
+/*int Test2(int V, int itr, float P) {
 	int counter = 0; // counter for graphs with diamter of 2
 	for (int i = 0; i < itr; i++) {
 		Graph* graph = build_random_graph(V, P);
@@ -152,6 +156,38 @@ int Test2(int V, int itr, float P) {
 		delete graph;
 	}
 	return counter;
+}*/
+
+
+int Test2(int V, int itr, float P) {
+	vector<future<void>> runTest2Async(itr); // array for storing the asyncs
+	vector<int> counter(itr, 0);// counter for graphs with diamter of 2, size of itr and 0 values
+	for (int i = 0; i < itr; i++) {
+		// running in 500 threads for each graph
+		runTest2Async[i] = std::async(test2Loop, i, i + 1, V, P, &counter, itr);
+	}
+	//waiting for async to finish
+	for (int i = 0; i < itr; i++) {
+		runTest2Async[i].wait();
+	}
+	int sum = 0;// sum of the values in counter (diameter of current graph)
+	for (int i = 0; i < itr; i++) {
+		sum += counter[i];
+	}
+	return sum;
+}
+
+void test2Loop(int start, int end, int V, float P, vector<int>* counter, int itr)
+{
+	for (int i = start; i < end; i++) {
+		Graph* graph = build_random_graph(V, P);
+		int test = diameter(graph);
+		if (test <= 2)
+			(*counter)[i] ++;
+
+		delete[] graph->adjList;
+		delete graph;
+	}
 }
 
 int Test3(int V, int itr, float P) {
@@ -183,13 +219,13 @@ int main() {
 	file.open("Test.csv");
 
 	file << "test1," << "Probabilty, connectivity, nubmer of graphs, connectivity, number of graphs" << endl;
+	auto start = std::chrono::high_resolution_clock::now();// starts time here
 	for (int i = 0; i < 10; i++) {
 		int test1 = Test1(V, itr, P1000[i]);
 		file << "," << P1000[i] << ":, true: ," << test1 << ", false: ," << (itr - test1) << endl;
 		cout << "P" << i + 1 << " finished in test1" << endl;
 	}
 	cout << "test1 is finished" << endl;
-
 
 	file << "test2, Probability, diameter <= 2, diameter > 2" << endl;
 	for (int i = 0; i < 10; i++) {
@@ -199,14 +235,15 @@ int main() {
 	}
 	cout << "test2 is finished" << endl;
 
-
 	file << "test3, Probability, number of isolated vertices, number of non isolated vertices" << endl;
 	for (int i = 0; i < 10; i++) {
 		int test3 = Test3(V, itr, P1000[i]);
 		file << "," << P1000[i] << ":, " << test3 << ", " << (itr - test3) << endl;
 		cout << "P" << i + 1 << " finished in test3" << endl;
 	}
+	auto stop = std::chrono::high_resolution_clock::now(); //stops time here
 	cout << "test3 is finished" << endl;
+	cout << ((stop - start) / 1000000).count(); //time in milliseconds
 
 	file.close();
 	return 0;

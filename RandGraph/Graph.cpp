@@ -206,6 +206,7 @@ int Test3(int V, int itr, float P) {
 
 
 int main() {
+	srand((unsigned int)time(nullptr));
 	const int V = 1000; // number of vertices
 	const int itr = 500; // number of graphs
 	// thershold 0.00690775527
@@ -218,12 +219,12 @@ int main() {
 	ofstream file;
 	file.open("ConnectivityTest.csv");
 
-	file << "test1," << "Probabilty, connectivity, nubmer of graphs, connectivity, number of graphs" << endl;
+	file << "Test1," << "Probabilty, Connectivity, Nubmer of graphs, Connectivity, Number of graphs, Precentage of connected graphs " << endl;
 	auto start = std::chrono::high_resolution_clock::now();// starts time here
 	for (int i = 0; i < 10; i++) {
 		int test1 = Test1(V, itr, P1000[i]);
-		file << "," << P1000[i] << ":, true: ," << test1 << ", false: ," << (itr - test1) << endl;
-		cout << "P" << i + 1 << " finished in test1" << endl;
+		file << "," << P1000[i] << ":, True: ," << test1 << ", False: ," << (itr - test1) << ", Precentage:  ," << (float)(test1 / itr) * 100 << "%" << endl;
+		cout << "P" << i + 1 << " Finished in test1" << endl;
 	}
 	cout << "test1 is finished" << endl;
 	file.close();
@@ -231,8 +232,8 @@ int main() {
 	file << "test2, Probability, diameter <= 2, diameter > 2" << endl;
 	for (int i = 0; i < 10; i++) {
 		int test2 = Test2(V, itr, P2_1000[i]);
-		file << "," << P2_1000[i] << ":, " << test2 << ", " << (itr - test2) << endl;
-		cout << "P " << i + 1 << " finished in test2" << endl;
+		file << "," << P2_1000[i] << ":, " << test2 << ", " << (itr - test2) << ",Precentage:, " << (float)(test2 / itr) * 100 << "%" << endl;
+		cout << "P" << i + 1 << " Finished in test2" << endl;
 	}
 	cout << "test2 is finished" << endl;
 	file.close();
@@ -240,11 +241,11 @@ int main() {
 	file << "test3, Probability, number of isolated vertices, number of non isolated vertices" << endl;
 	for (int i = 0; i < 10; i++) {
 		int test3 = Test3(V, itr, P1000[i]);
-		file << "," << P1000[i] << ":, " << test3 << ", " << (itr - test3) << endl;
-		cout << "P" << i + 1 << " finished in test3" << endl;
+		file << "," << P1000[i] << ":, " << test3 << ", " << (itr - test3) << ",Precentage:, " << (float)(test3 / itr) * 100 << "%" << endl;
+		cout << "P" << i + 1 << " Finished in test3" << endl;
 	}
 	auto stop = std::chrono::high_resolution_clock::now(); //stops time here
-	cout << "test3 is finished" << endl;
+	cout << "Test3 is finished" << endl;
 	cout << ((stop - start) / 1000000).count(); //time in milliseconds
 
 	file.close();

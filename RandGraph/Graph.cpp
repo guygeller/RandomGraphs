@@ -209,14 +209,14 @@ int main() {
 	const int V = 1000; // number of vertices
 	const int itr = 500; // number of graphs
 	// thershold 0.00690775527
-	float P1000[10] = { 0.0007f, 0.002f, 0.003f,0.006f, 0.0063f,
-		0.00699f, 0.00788f, 0.00999f, 0.012f, 0.014f };
+	float P1000[10] = { 0.005f, 0.0057f, 0.0059f,0.006f, 0.00690775527f,
+		0.00699f, 0.00788f, 0.00888f, 0.00999f, 0.012f };
 	// threshold 0.11753940002
-	float P2_1000[10] = { 0.01f , 0.05f , 0.07f, 0.09f, 0.01f,
-		0.119f, 0.13f, 0.27f, 0.48f, 0.79f };
+	float P2_1000[10] = { 0.11f , 0.112f , 0.113f, 0.114f, 0.11753940002f,
+		0.1178f, 0.12f, 0.125f, 0.13f, 0.135f };
 	// opens an existing csv file or creates a new file.
 	ofstream file;
-	file.open("Test.csv");
+	file.open("ConnectivityTest.csv");
 
 	file << "test1," << "Probabilty, connectivity, nubmer of graphs, connectivity, number of graphs" << endl;
 	auto start = std::chrono::high_resolution_clock::now();// starts time here
@@ -226,7 +226,8 @@ int main() {
 		cout << "P" << i + 1 << " finished in test1" << endl;
 	}
 	cout << "test1 is finished" << endl;
-
+	file.close();
+	file.open("DiameterTest.csv");
 	file << "test2, Probability, diameter <= 2, diameter > 2" << endl;
 	for (int i = 0; i < 10; i++) {
 		int test2 = Test2(V, itr, P2_1000[i]);
@@ -234,7 +235,8 @@ int main() {
 		cout << "P " << i + 1 << " finished in test2" << endl;
 	}
 	cout << "test2 is finished" << endl;
-
+	file.close();
+	file.open("isIsolatedTest.csv");
 	file << "test3, Probability, number of isolated vertices, number of non isolated vertices" << endl;
 	for (int i = 0; i < 10; i++) {
 		int test3 = Test3(V, itr, P1000[i]);

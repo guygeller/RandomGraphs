@@ -218,30 +218,29 @@ int main() {
 	// opens an existing csv file or creates a new file.
 	ofstream file;
 	file.open("ConnectivityTest.csv");
-
 	file << "Test1," << "Probabilty, Connectivity, Nubmer of graphs, Connectivity, Number of graphs, Precentage of connected graphs " << endl;
 	auto start = std::chrono::high_resolution_clock::now();// starts time here
 	for (int i = 0; i < 10; i++) {
 		int test1 = Test1(V, itr, P1000[i]);
-		file << "," << P1000[i] << ":, True: ," << test1 << ", False: ," << (itr - test1) << ", Precentage:  ," << (float)(test1 / itr) * 100 << "%" << endl;
+		file << "," << P1000[i] << ":, True: ," << test1 << ", False: ," << (itr - test1) << ", Precentage:  ," << ((float)test1 / itr) * 100.f << "%" << endl;
 		cout << "P" << i + 1 << " Finished in test1" << endl;
 	}
-	cout << "test1 is finished" << endl;
+	cout << "Test1 is finished" << endl;
 	file.close();
 	file.open("DiameterTest.csv");
-	file << "test2, Probability, diameter <= 2, diameter > 2" << endl;
+	file << "Test2, Probability, Diameter <= 2, Diameter > 2, Precentages of graphs with diamter <=2" << endl;
 	for (int i = 0; i < 10; i++) {
 		int test2 = Test2(V, itr, P2_1000[i]);
-		file << "," << P2_1000[i] << ":, " << test2 << ", " << (itr - test2) << ",Precentage:, " << (float)(test2 / itr) * 100 << "%" << endl;
+		file << "," << P2_1000[i] << ":, " << test2 << ", " << (itr - test2) << ", Precentage: , " << ((float)test2 / itr) * 100.f << "%" << endl;
 		cout << "P" << i + 1 << " Finished in test2" << endl;
 	}
-	cout << "test2 is finished" << endl;
+	cout << "Test2 is finished" << endl;
 	file.close();
 	file.open("isIsolatedTest.csv");
-	file << "test3, Probability, number of isolated vertices, number of non isolated vertices" << endl;
+	file << "Test3, Probability, Graphs with isolated vertices, Graphs with non isolated vertices , Precentages of graphs with isolated vertex" << endl;
 	for (int i = 0; i < 10; i++) {
 		int test3 = Test3(V, itr, P1000[i]);
-		file << "," << P1000[i] << ":, " << test3 << ", " << (itr - test3) << ",Precentage:, " << (float)(test3 / itr) * 100 << "%" << endl;
+		file << "," << P1000[i] << ":, " << test3 << ", " << (itr - test3) << ", Precentage: , " << ((float)test3 / itr) * 100.f << "%" << endl;
 		cout << "P" << i + 1 << " Finished in test3" << endl;
 	}
 	auto stop = std::chrono::high_resolution_clock::now(); //stops time here

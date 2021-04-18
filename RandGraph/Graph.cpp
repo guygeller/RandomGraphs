@@ -1,4 +1,10 @@
-﻿#include<iostream>
+﻿/*
+Written By:
+- Guy Geller, Id: 313162554
+- Assaf Golani, Id: 312457351
+*/
+
+#include<iostream>
 #include<fstream>
 #include<vector>
 #include<queue>
@@ -21,7 +27,7 @@ bool Is_Isolated(Graph* graph);
 bool connectivity(Graph* graph);
 int Test1(int V, int itr, float P);
 int Test2(int V, int itr, float P);
-void test2Loop(int start, int end, int V, float P, vector<int>* counter, int itr);
+void test2Loop(int start, int end, int V, float P, vector<int>* counter);
 int Test3(int V, int itr, float P);
 
 
@@ -142,29 +148,12 @@ int Test1(int V, int itr, float P) {
 	return counter;
 }
 
-
-//Test2 function without using threads
-/*int Test2(int V, int itr, float P) {
-	int counter = 0; // counter for graphs with diamter of 2
-	for (int i = 0; i < itr; i++) {
-		Graph* graph = build_random_graph(V, P);
-		int test = diameter(graph);
-		if (test <= 2)
-			counter++;
-
-		delete[] graph->adjList;
-		delete graph;
-	}
-	return counter;
-}*/
-
-
 int Test2(int V, int itr, float P) {
 	vector<future<void>> runTest2Async(itr); // array for storing the asyncs
 	vector<int> counter(itr, 0);// counter for graphs with diamter of 2, size of itr and 0 values
 	for (int i = 0; i < itr; i++) {
-		// running in 500 threads for each graph
-		runTest2Async[i] = std::async(test2Loop, i, i + 1, V, P, &counter, itr);
+		// running in threads for each graph
+		runTest2Async[i] = std::async(test2Loop, i, i + 1, V, P, &counter);
 	}
 	//waiting for async to finish
 	for (int i = 0; i < itr; i++) {
@@ -177,12 +166,12 @@ int Test2(int V, int itr, float P) {
 	return sum;
 }
 
-void test2Loop(int start, int end, int V, float P, vector<int>* counter, int itr)
+void test2Loop(int start, int end, int V, float P, vector<int>* counter)//helper function for Test2
 {
 	for (int i = start; i < end; i++) {
 		Graph* graph = build_random_graph(V, P);
 		int test = diameter(graph);
-		if (test <= 2)
+		if (test <= 2) // counts the number of graphs with diameter <= 2
 			(*counter)[i] ++;
 
 		delete[] graph->adjList;
@@ -210,15 +199,15 @@ int main() {
 	const int V = 1000; // number of vertices
 	const int itr = 500; // number of graphs
 	// thershold 0.00690775527
-	float P1000[10] = { 0.005f, 0.0057f, 0.0059f,0.006f, 0.00690775527f,
+	float P1000[10] = { 0.005f, 0.0057f, 0.0059f,0.006f, 0.006559f,
 		0.00699f, 0.00788f, 0.00888f, 0.00999f, 0.012f };
 	// threshold 0.11753940002
-	float P2_1000[10] = { 0.11f , 0.112f , 0.113f, 0.114f, 0.11753940002f,
+	float P2_1000[10] = { 0.11f , 0.112f , 0.113f, 0.114f, 0.1155f ,
 		0.1178f, 0.12f, 0.125f, 0.13f, 0.135f };
 	// opens an existing csv file or creates a new file.
 	ofstream file;
 	file.open("ConnectivityTest.csv");
-	file << "Test1," << "Probabilty, Connectivity, Nubmer of graphs, Connectivity, Number of graphs, Precentage of connected graphs " << endl;
+	file << "Test1," << "Probabilty, Connectivity, Nubmer of connected graphs, Connectivity, Number of graphs, Precentage of connected graphs " << endl;
 	auto start = std::chrono::high_resolution_clock::now();// starts time here
 	for (int i = 0; i < 10; i++) {
 		int test1 = Test1(V, itr, P1000[i]);
@@ -228,7 +217,7 @@ int main() {
 	cout << "Test1 is finished" << endl;
 	file.close();
 	file.open("DiameterTest.csv");
-	file << "Test2, Probability, Diameter <= 2, Diameter > 2, Precentages of graphs with diamter <=2" << endl;
+	file << "Test2, Probability, number of graphs with diameter <= 2, Diameter > 2, Precentages of graphs with diamter <=2" << endl;
 	for (int i = 0; i < 10; i++) {
 		int test2 = Test2(V, itr, P2_1000[i]);
 		file << "," << P2_1000[i] << ":, " << test2 << ", " << (itr - test2) << ", Precentage: , " << ((float)test2 / itr) * 100.f << "%" << endl;
@@ -237,7 +226,7 @@ int main() {
 	cout << "Test2 is finished" << endl;
 	file.close();
 	file.open("isIsolatedTest.csv");
-	file << "Test3, Probability, Graphs with isolated vertices, Graphs with non isolated vertices , Precentages of graphs with isolated vertex" << endl;
+	file << "Test3, Probability, nubmer of graphs with isolated vertices, Graphs with non isolated vertices , Precentages of graphs with isolated vertex" << endl;
 	for (int i = 0; i < 10; i++) {
 		int test3 = Test3(V, itr, P1000[i]);
 		file << "," << P1000[i] << ":, " << test3 << ", " << (itr - test3) << ", Precentage: , " << ((float)test3 / itr) * 100.f << "%" << endl;

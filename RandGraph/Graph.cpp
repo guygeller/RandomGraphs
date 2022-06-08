@@ -1,7 +1,7 @@
 ﻿/*
 Written By:
-- Guy Geller, Id: 313162554
-- Assaf Golani, Id: 312457351
+- Guy Geller
+- Assaf Golani
 */
 
 #include<iostream>
